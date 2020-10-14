@@ -43,12 +43,12 @@ const sumItems = (cartItems: CartItemsDTO[]): any => {
   return { itemCount, totalPrice };
 };
 
-const CartReducer = (state: State, action: Action): any | State => {
+const CartReducer = (state: CartItemsDTO[], action: Action): any | State => {
   switch (action.type) {
     case 'addItem':
-      if (!state.cartItems.find(item => item.id === action.product?.id)) {
+      if (!state.find(item => item.id === action.product?.id)) {
         if (action.product) {
-          state.cartItems.push({
+          state.push({
             ...action.product,
             quantity: 1,
           });
@@ -57,8 +57,8 @@ const CartReducer = (state: State, action: Action): any | State => {
 
       return {
         ...state,
-        ...sumItems(state.cartItems),
-        cartItems: [...state.cartItems],
+        ...sumItems(state),
+        cartItems: [...state],
       };
     case 'removeItem':
       return {

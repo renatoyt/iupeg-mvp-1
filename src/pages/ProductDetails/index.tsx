@@ -47,7 +47,7 @@ const ProductDetails: React.FC = () => {
             <ProductContent>
               <ProductTitle>Jack Daniels</ProductTitle>
               <ProductDescription>
-                Whisky Americano JACK DANIELs Garrafa 750 MLA
+                Whisky Americano JACK DANIELs Garrafa 750 ML
               </ProductDescription>
               <ProductPricing>R$ 79,90</ProductPricing>
             </ProductContent>

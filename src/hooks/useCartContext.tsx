@@ -1,4 +1,11 @@
-import React, { createContext, useMemo, useReducer, useState } from 'react';
+/* eslint-disable camelcase */
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { CartReducer, sumItems, CartItemsDTO } from '../reducers/CartReducer';
 
@@ -6,14 +13,14 @@ interface Product {
   id: string;
   name: string;
   description: string;
+  image_url: string;
   price: number;
-  quantity: number;
 }
 
 interface CartContextDTO {
   decrement(product: Product): void;
   increment(product: Product): void;
-  addItem(product: Product): void;
+  addItem(product: Product | undefined): void;
   removeItem(product: Product): void;
   clear(): void;
   checkout(): void;
@@ -37,8 +44,6 @@ const initialState = async (): Promise<InitialState> => {
 };
 
 const CartProvider: React.FC = ({ children }) => {
-  const [products, setProducts] = useState(initialState);
-
   const [state, dispatch] = useReducer(CartReducer, initialState);
 
   const increment = (product: CartItemsDTO): void => {
@@ -84,4 +89,14 @@ const CartProvider: React.FC = ({ children }) => {
   );
 };
 
-export default CartProvider;
+const useCart = (): CartContextDTO => {
+  const context = useContext(CartContext);
+
+  if (!context) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+
+  return context;
+};
+
+export { CartProvider, useCart };

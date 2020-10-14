@@ -3,6 +3,8 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Button, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import TextRegular from '../Text/TextRegular';
+import { Products } from '../../util/Products';
+import { useCart } from '../../hooks/useCartContext';
 
 const Container = styled.View`
   flex-direction: column;
@@ -23,6 +25,8 @@ const Scanner: React.FC = () => {
   const [hasPermission, setHasPermission] = useState<any>(null);
   const [scanned, setScanned] = useState(false);
 
+  const { addItem } = useCart();
+
   useEffect(() => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -33,7 +37,11 @@ const Scanner: React.FC = () => {
   const handleBarCodeScanned = ({ data, type }: BarCodeScannerResult): void => {
     setScanned(true);
 
-    alert(`${data}`);
+    if (data) {
+      const newProduct = Products.find(dt => dt.id === data);
+
+      addItem(newProduct);
+    }
   };
 
   if (hasPermission === null) {
