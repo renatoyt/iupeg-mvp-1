@@ -66,20 +66,17 @@ export const ProductContent = styled.View`
 
 export const ProductTitle = styled(TextSemiBold)`
   font-size: 24px;
-  line-height: 32px;
   color: #3d3d4d;
 `;
 
 export const ProductDescription = styled(TextRegular)`
   font-size: 18px;
-  line-height: 25px;
   margin-top: 8px;
   color: #3d3d4d;
 `;
 
 export const ProductPricing = styled(TextSemiBold)`
   font-size: 24px;
-  line-height: 31px;
   color: #6c6c80;
   margin-top: 8px;
 `;
@@ -91,7 +88,6 @@ export const TotalContainer = styled.View`
 
 export const TotalTitle = styled(TextSemiBold)`
   font-size: 24px;
-  line-height: 31px;
   color: #3d3d4d;
 `;
 
@@ -103,18 +99,16 @@ export const PriceButtonContainer = styled.View`
 `;
 
 export const TotalPrice = styled(TextSemiBold)`
-  font-size: 24px;
-  line-height: 31px;
+  font-size: 26px;
   color: red;
   margin-top: 16px;
 `;
 
 export const QuantityContainer = styled.View`
-  display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 105px;
+  width: 130px;
   background: #f0f0f5;
   border-radius: 8px;
   padding: 10px 15px;
@@ -123,18 +117,17 @@ export const QuantityContainer = styled.View`
 
 export const IconDecrement = styled(Icon)`
   color: #6c6c80;
-  font-size: 15px;
+  font-size: 20px;
 `;
 
 export const AdittionalItemText = styled(TextRegular)`
-  font-size: 15px;
-  line-height: 19px;
+  font-size: 20px;
   color: #6c6c80;
 `;
 
 export const IconIncrement = styled(Icon)`
   color: #6c6c80;
-  font-size: 15px;
+  font-size: 20px;
 `;
 
 export const FinishOrderButton = styled.TouchableOpacity`
@@ -147,7 +140,6 @@ export const FinishOrderButton = styled.TouchableOpacity`
 
 export const ButtonText = styled(TextSemiBold)`
   font-size: 15px;
-  line-height: 22px;
   color: #fff;
   flex: 1;
   text-align: center;

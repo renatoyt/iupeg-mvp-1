@@ -1,5 +1,10 @@
 import React from 'react';
+import { TextInputProps } from 'react-native';
 import styled from 'styled-components/native';
+
+interface TextInputPropsElement extends TextInputProps {
+  ref?: any;
+}
 
 export const InputStyled = styled.TextInput`
   max-width: 100%;
@@ -12,9 +17,10 @@ export const InputStyled = styled.TextInput`
   background: #f0f1f4;
 `;
 
-const Input: React.FC = ({ ...props }) => {
+const Input: React.FC<TextInputPropsElement> = ({ ref, ...props }) => {
   return (
     <InputStyled
+      ref={ref}
       placeholder="Buscar produto no carrinho"
       placeholderTextColor="#a6aab4"
       {...props}

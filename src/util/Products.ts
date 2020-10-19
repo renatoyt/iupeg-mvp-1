@@ -1,14 +1,14 @@
 export const Products = [
   {
-    id: '1',
+    id: '5901234123457',
     name: 'Bolacha Trakinas',
     description: 'Whisky Americano JACK DANIELs Garrafa 750 ML',
     image_url: '../assets/jack-daniels.png',
     price: 3.09,
   },
   {
-    id: '2',
-    name: 'Molho de Tomate',
+    id: '4070071967072',
+    name: 'Jack Daniels',
     description: 'Whisky Americano JACK DANIELs Garrafa 750 ML',
     image_url: '../assets/jack-daniels.png',
     price: 3.89,

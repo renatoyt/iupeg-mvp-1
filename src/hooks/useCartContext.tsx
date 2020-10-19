@@ -1,13 +1,13 @@
 /* eslint-disable camelcase */
 import React, {
   createContext,
+  useCallback,
   useContext,
+  useEffect,
   useMemo,
-  useReducer,
   useState,
 } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-import { CartReducer, sumItems, CartItemsDTO } from '../reducers/CartReducer';
 
 interface Product {
   id: string;
@@ -15,60 +15,97 @@ interface Product {
   description: string;
   image_url: string;
   price: number;
+  quantity: number;
 }
 
-interface CartContextDTO {
-  decrement(product: Product): void;
-  increment(product: Product): void;
-  addItem(product: Product | undefined): void;
-  removeItem(product: Product): void;
+interface CartContextType {
+  products: Product[];
+  increment(id: string): void;
+  decrement(id: string): void;
+  addItem(product: Product): void;
+  removeItem(id: string): void;
   clear(): void;
-  checkout(): void;
 }
 
-interface InitialState {
-  checkout: boolean;
-  storage: CartItemsDTO[];
-}
-
-const CartContext = createContext<CartContextDTO | null>(null);
-const initialState = async (): Promise<InitialState> => {
-  try {
-    const jsonValue = await AsyncStorage.getItem('cart');
-    const storage: CartItemsDTO[] = jsonValue ? JSON.parse(jsonValue) : [];
-
-    return { cartItems: storage, ...sumItems(storage), checkout: false };
-  } catch (e) {
-    throw new Error('Algo deu errado, tente novamente');
-  }
-};
+const CartContext = createContext<CartContextType | null>(null);
 
 const CartProvider: React.FC = ({ children }) => {
-  const [state, dispatch] = useReducer(CartReducer, initialState);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const increment = (product: CartItemsDTO): void => {
-    dispatch({ type: 'increment', product });
-  };
+  useEffect(() => {
+    (async () => {
+      const getProducts = await AsyncStorage.getItem('products');
 
-  const decrement = (product: CartItemsDTO): void => {
-    dispatch({ type: 'decrement', product });
-  };
+      if (getProducts) {
+        setProducts([...JSON.parse(getProducts)]);
+      }
+    })();
+  }, []);
 
-  const addItem = (product: CartItemsDTO): void => {
-    dispatch({ type: 'addItem', product });
-  };
+  const increment = useCallback(
+    async id => {
+      const newProducts = products.map(data => {
+        if (data.id === id) {
+          return { ...data, quantity: data.quantity + 1 };
+        }
+        return data;
+      });
 
-  const removeItem = (product: CartItemsDTO): void => {
-    dispatch({ type: 'removeItem', product });
-  };
+      setProducts(newProducts);
 
-  const clear = (): void => {
-    dispatch({ type: 'clear' });
-  };
+      await AsyncStorage.setItem('products', JSON.stringify(newProducts));
+    },
+    [products],
+  );
 
-  const checkout = (): void => {
-    dispatch({ type: 'checkout' });
-  };
+  const decrement = useCallback(
+    async id => {
+      const findProduct = products.map(item => {
+        if (item.id === id) {
+          return { ...item, quantity: item.quantity - 1 };
+        }
+        return item;
+      });
+
+      setProducts(findProduct);
+
+      await AsyncStorage.setItem('products', JSON.stringify(findProduct));
+    },
+    [products],
+  );
+
+  const addItem = useCallback(
+    // eslint-disable-next-line consistent-return
+    async (product: Product) => {
+      const findProduct = products.find(data => data.id === product.id);
+
+      if (findProduct) {
+        return increment(product.id);
+      }
+
+      setProducts([...products, { ...product, quantity: 1 }]);
+
+      await AsyncStorage.setItem('products', JSON.stringify(products));
+    },
+    [products, increment],
+  );
+
+  const removeItem = useCallback(
+    async id => {
+      const filterProducts = products.filter(data => data.id !== id);
+
+      setProducts(filterProducts);
+
+      await AsyncStorage.setItem('products', JSON.stringify(filterProducts));
+    },
+    [products],
+  );
+
+  const clear = useCallback(async () => {
+    setProducts([]);
+
+    await AsyncStorage.removeItem('products');
+  }, []);
 
   const contextValues = useMemo(
     () => ({
@@ -77,9 +114,9 @@ const CartProvider: React.FC = ({ children }) => {
       addItem,
       removeItem,
       clear,
-      checkout,
+      products,
     }),
-    [],
+    [decrement, increment, addItem, removeItem, clear, products],
   );
 
   return (
@@ -89,7 +126,7 @@ const CartProvider: React.FC = ({ children }) => {
   );
 };
 
-const useCart = (): CartContextDTO => {
+const useCart = (): CartContextType => {
   const context = useContext(CartContext);
 
   if (!context) {
@@ -99,4 +136,4 @@ const useCart = (): CartContextDTO => {
   return context;
 };
 
-export { CartProvider, useCart };
+export { CartProvider, useCart, Product };

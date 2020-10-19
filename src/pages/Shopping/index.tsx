@@ -1,11 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import Input from '../../components/Input';
 import Scanner from '../../components/Scanner';
 import Search from '../../components/Search';
 import TextRegular from '../../components/Text/TextRegular';
 import GoToPaymentButton from '../../components/Touchable/GoToPaymentButton';
+import { useCart } from '../../hooks/useCartContext';
 import formatValue from '../../util/formatValue';
-import { Products } from '../../util/Products';
 import {
   Container,
   Header,
@@ -32,52 +34,78 @@ export interface ProductProps {
   name: string;
   price: number;
   formattedPrice: string;
+  quantity: number;
 }
 
 const Shopping: React.FC = () => {
-  const [products, setProducts] = useState<ProductProps[]>([]);
+  const [formattedList, setFormattedList] = useState<ProductProps[]>([]);
+  const [searchValue, setSearchValue] = useState('');
 
   const { navigate } = useNavigation();
+  const { products } = useCart();
+
+  const handleSearch = useCallback(text => {
+    setSearchValue(text);
+  }, []);
 
   useEffect(() => {
-    const formattedData = Products.map(dt => {
+    const formattedData = products.map(dt => {
       return {
         ...dt,
         formattedPrice: formatValue(dt.price),
       };
     });
 
-    setProducts(formattedData);
-  }, []);
+    const searchProducts = formattedData.filter(data => {
+      return data.name.toLowerCase().includes(searchValue.toLowerCase());
+    });
 
-  const navigateToProductDetails = useCallback(() => {
-    navigate('ProductDetails');
-  }, [navigate]);
+    setFormattedList(searchProducts);
+  }, [products, searchValue]);
+
+  const navigateToProductDetails = useCallback(
+    (id: string) => {
+      navigate('ProductDetails', { id });
+    },
+    [navigate],
+  );
+
+  const totalPrice = useMemo(() => {
+    const total = products.reduce((acc, product) => {
+      const subtotal = product.price * product.quantity;
+      return acc + subtotal;
+    }, 0);
+
+    return formatValue(total);
+  }, [products]);
 
   return (
     <Container>
-      <Header>
-        <ContentHeader>
-          <HeaderTitle>Valor da compra</HeaderTitle>
-          <TotalValueText>R$ 178,21</TotalValueText>
-        </ContentHeader>
-        <Scanner />
-      </Header>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <Header>
+          <ContentHeader>
+            <HeaderTitle>Valor da compra</HeaderTitle>
+            <TotalValueText>{totalPrice}</TotalValueText>
+          </ContentHeader>
+          <Scanner />
+          <Input />
+        </Header>
+      </TouchableWithoutFeedback>
       <Section>
         <CartTitle>Carrinho de compras</CartTitle>
-        <Search />
+        <Search onChangeText={text => handleSearch(text)} value={searchValue} />
         <Product>
           <ItensList
-            data={products}
+            data={formattedList}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-              <ProductList onPress={navigateToProductDetails}>
+              <ProductList onPress={() => navigateToProductDetails(item.id)}>
                 <ProductDescription>
                   <TextName>
                     <TextRegular style={{ color: '#a6aab4' }}>iu: </TextRegular>
                     {item.name}
                   </TextName>
-                  <TextQuantity>01 unidade</TextQuantity>
+                  <TextQuantity>{item.quantity} unidade</TextQuantity>
                 </ProductDescription>
                 <ProductPrice>
                   <TextPrice>{item.formattedPrice}</TextPrice>

@@ -13,7 +13,11 @@ const AppRoutes: React.FC = () => (
     }}
   >
     <App.Screen name="Shopping" component={Shopping} />
-    <App.Screen name="ProductDetails" component={ProductDetails} />
+    <App.Screen
+      options={{ gestureEnabled: false }}
+      name="ProductDetails"
+      component={ProductDetails}
+    />
   </App.Navigator>
 );
 

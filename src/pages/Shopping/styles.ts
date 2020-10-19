@@ -28,7 +28,6 @@ export const ContentHeader = styled.View`
 export const HeaderTitle = styled(TextRegular)`
   font-size: 16px;
   letter-spacing: 0.2px;
-  line-height: 22px;
 
   color: #a6aab4;
 `;
@@ -36,7 +35,6 @@ export const HeaderTitle = styled(TextRegular)`
 export const TotalValueText = styled(TextSemiBold)`
   font-size: 32px;
   letter-spacing: 0.5px;
-  line-height: 42px;
 
   color: #171d33;
 `;

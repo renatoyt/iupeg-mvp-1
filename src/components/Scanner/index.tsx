@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Button, StyleSheet } from 'react-native';
+import { Alert, Button, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
+import { find, propEq } from 'ramda';
 import TextRegular from '../Text/TextRegular';
 import { Products } from '../../util/Products';
 import { useCart } from '../../hooks/useCartContext';
+
+interface ProductType {
+  id: string;
+  name: string;
+  description: string;
+  // eslint-disable-next-line camelcase
+  image_url: string;
+  price: number;
+  quantity: number;
+}
 
 const Container = styled.View`
   flex-direction: column;
@@ -34,14 +45,29 @@ const Scanner: React.FC = () => {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ data, type }: BarCodeScannerResult): void => {
+  const handleBarCodeScanned = ({ data }: BarCodeScannerResult): void => {
+    const forCompare = propEq('id', data);
+    const findAndCompare: ProductType | any = find(forCompare)(Products);
+
+    const sucess = (): void => {
+      addItem(findAndCompare);
+    };
+
+    const notFound = (): void => {
+      Alert.alert(
+        'Erro na leitura',
+        'Ocorreu um erro ao realizar a leitura do código de barras, tente novamente',
+        [
+          {
+            text: 'Escanear novamente.',
+            onPress: () => setScanned(false),
+          },
+        ],
+      );
+    };
+
     setScanned(true);
-
-    if (data) {
-      const newProduct = Products.find(dt => dt.id === data);
-
-      addItem(newProduct);
-    }
+    return findAndCompare ? sucess() : notFound();
   };
 
   if (hasPermission === null) {
