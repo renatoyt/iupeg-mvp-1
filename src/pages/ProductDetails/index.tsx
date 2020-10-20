@@ -55,14 +55,12 @@ const ProductDetails: React.FC = () => {
 
   useEffect((): void => {
     const formattedData: any = products?.find(dt => {
-      if (dt.id !== routeParams.id) {
-        throw new Error('Produto não encontrado, tente novamente');
+      if (dt.id === routeParams.id) {
+        return {
+          ...dt,
+          formattedPrice: formatValue(dt.price),
+        };
       }
-
-      return {
-        ...dt,
-        formattedPrice: formatValue(dt.price),
-      };
     });
 
     setProductDetails(formattedData);

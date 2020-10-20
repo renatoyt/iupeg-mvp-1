@@ -21,6 +21,8 @@ export const Header = styled.View`
 `;
 
 export const ContentHeader = styled.View`
+  margin-top: 5px;
+
   align-items: center;
   justify-content: center;
 `;

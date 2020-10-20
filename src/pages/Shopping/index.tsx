@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
-import Input from '../../components/Input';
+import BarCodeInput from '../../components/Popups/BarCodeInput';
 import Scanner from '../../components/Scanner';
 import Search from '../../components/Search';
 import TextRegular from '../../components/Text/TextRegular';
@@ -88,7 +88,7 @@ const Shopping: React.FC = () => {
             <TotalValueText>{totalPrice}</TotalValueText>
           </ContentHeader>
           <Scanner />
-          <Input />
+          <BarCodeInput />
         </Header>
       </TouchableWithoutFeedback>
       <Section>
