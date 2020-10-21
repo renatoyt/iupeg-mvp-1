@@ -1,6 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import BarCodeInput from '../../components/Popups/BarCodeInput';
 import Scanner from '../../components/Scanner';
 import Search from '../../components/Search';
@@ -14,6 +19,9 @@ import {
   ContentHeader,
   Section,
   HeaderTitle,
+  WithoutScanner,
+  SectionHeader,
+  CameraIcon,
   TotalValueText,
   Product,
   ItensList,
@@ -37,16 +45,19 @@ export interface ProductProps {
   quantity: number;
 }
 
+interface HeaderRef {
+  fadeInUp(): void;
+}
+
 const Shopping: React.FC = () => {
   const [formattedList, setFormattedList] = useState<ProductProps[]>([]);
   const [searchValue, setSearchValue] = useState('');
+  const [camera, setCamera] = useState(true);
+  const [searchFocus, setSearchFocus] = useState(false);
 
   const { navigate } = useNavigation();
   const { products } = useCart();
-
-  const handleSearch = useCallback(text => {
-    setSearchValue(text);
-  }, []);
+  const headerRef = useRef<HeaderRef | any>(null);
 
   useEffect(() => {
     const formattedData = products.map(dt => {
@@ -63,12 +74,25 @@ const Shopping: React.FC = () => {
     setFormattedList(searchProducts);
   }, [products, searchValue]);
 
+  const handleSearch = useCallback(text => {
+    setSearchValue(text);
+  }, []);
+
+  const toggleSearch = useCallback(() => {
+    setSearchFocus(!searchFocus);
+    if (headerRef) {
+      headerRef.current?.fadeInUp();
+    }
+  }, [searchFocus]);
+
   const navigateToProductDetails = useCallback(
     (id: string) => {
       navigate('ProductDetails', { id });
     },
     [navigate],
   );
+
+  const toggleCamera = useCallback(() => setCamera(!camera), [camera]);
 
   const totalPrice = useMemo(() => {
     const total = products.reduce((acc, product) => {
@@ -81,19 +105,34 @@ const Shopping: React.FC = () => {
 
   return (
     <Container>
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <Header>
-          <ContentHeader>
-            <HeaderTitle>Valor da compra</HeaderTitle>
-            <TotalValueText>{totalPrice}</TotalValueText>
-          </ContentHeader>
-          <Scanner />
+      <Header
+        ref={headerRef}
+        delay={3000}
+        useNativeDriver
+        isSelected={searchFocus}
+      >
+        <ContentHeader>
+          <HeaderTitle>Valor da compra</HeaderTitle>
+          <TotalValueText>{totalPrice}</TotalValueText>
+        </ContentHeader>
+        {camera ? <Scanner /> : <WithoutScanner />}
+        <SectionHeader>
           <BarCodeInput />
-        </Header>
-      </TouchableWithoutFeedback>
-      <Section>
+          <CameraIcon
+            isSelected={camera}
+            onPress={toggleCamera}
+            iconName="camera-off"
+          />
+        </SectionHeader>
+      </Header>
+      <Section isSelected={searchFocus}>
         <CartTitle>Carrinho de compras</CartTitle>
-        <Search onChangeText={text => handleSearch(text)} value={searchValue} />
+        <Search
+          onBlur={toggleSearch}
+          onFocus={toggleSearch}
+          onChangeText={text => handleSearch(text)}
+          value={searchValue}
+        />
         <Product>
           <ItensList
             data={formattedList}

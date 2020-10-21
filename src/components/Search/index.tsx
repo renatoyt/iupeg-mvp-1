@@ -1,11 +1,13 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import { TextInputProps } from 'react-native';
 import Icon from '../Icon';
 import Input from '../Input';
 
-interface InputProps {
+interface InputProps extends TextInputProps {
   onChangeText: (text: string) => void;
   value: string;
+  ref?: any;
 }
 
 export const Container = styled.View`
@@ -24,10 +26,20 @@ export const IconStyled = styled(Icon)`
   margin: 10px 16px 0 0;
 `;
 
-const Search: React.FC<InputProps> = ({ value, onChangeText, ...props }) => {
+const Search: React.FC<InputProps> = ({
+  value,
+  ref,
+  onChangeText,
+  ...props
+}) => {
   return (
     <Container>
-      <InputStyled value={value} onChangeText={onChangeText} {...props} />
+      <InputStyled
+        ref={ref}
+        value={value}
+        onChangeText={onChangeText}
+        {...props}
+      />
       <IconStyled iconName="search" />
     </Container>
   );

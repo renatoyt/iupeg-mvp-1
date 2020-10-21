@@ -7,24 +7,15 @@ type WithChildren<T = {}> = T & { children?: React.ReactNode };
 type IconPropsElement = WithChildren<{
   iconName: string;
   isSelected?: boolean;
-  onPress?(): void;
 }>;
 
 const Icon = ({
   iconName,
-  isSelected,
-  onPress,
   children,
   ...props
 }: IconPropsElement): JSX.Element => {
   return (
-    <Feather
-      name={iconName}
-      size={26}
-      color={isSelected ? '#54d3ad' : '#a6aab0'}
-      onPress={onPress}
-      {...props}
-    >
+    <Feather name={iconName} size={26} color="#a6aab0" {...props}>
       {children}
     </Feather>
   );

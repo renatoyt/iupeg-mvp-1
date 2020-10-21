@@ -2,20 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Alert, Button, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { find, propEq } from 'ramda';
 import TextRegular from '../Text/TextRegular';
-import { Products } from '../../util/Products';
 import { useCart } from '../../hooks/useCartContext';
-
-interface ProductType {
-  id: string;
-  name: string;
-  description: string;
-  // eslint-disable-next-line camelcase
-  image_url: string;
-  price: number;
-  quantity: number;
-}
+import findProductByID from '../../util/findProductByID';
 
 const Container = styled.View`
   flex-direction: column;
@@ -46,11 +35,10 @@ const Scanner: React.FC = () => {
   }, []);
 
   const handleBarCodeScanned = ({ data }: BarCodeScannerResult): void => {
-    const forCompare = propEq('id', data);
-    const findAndCompare: ProductType | any = find(forCompare)(Products);
+    const product = findProductByID(data);
 
     const sucess = (): void => {
-      addItem(findAndCompare);
+      addItem(product);
     };
 
     const notFound = (): void => {
@@ -67,7 +55,7 @@ const Scanner: React.FC = () => {
     };
 
     setScanned(true);
-    return findAndCompare ? sucess() : notFound();
+    return product ? sucess() : notFound();
   };
 
   if (hasPermission === null) {

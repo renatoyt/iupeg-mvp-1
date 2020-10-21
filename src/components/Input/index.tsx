@@ -6,25 +6,28 @@ interface TextInputPropsElement extends TextInputProps {
   ref?: any;
 }
 
-export const InputStyled = styled.TextInput`
-  max-width: 100%;
+const Container = styled.View``;
+
+const InputStyled = styled.TextInput`
+  width: 100%;
   height: 32px;
   border-radius: 6px;
   padding: 0 8px 0 8px;
 
   font-family: 'SarabunRegular';
-
   background: #f0f1f4;
 `;
 
 const Input: React.FC<TextInputPropsElement> = ({ ref, ...props }) => {
   return (
-    <InputStyled
-      ref={ref}
-      placeholder="Buscar produto no carrinho"
-      placeholderTextColor="#a6aab4"
-      {...props}
-    />
+    <Container>
+      <InputStyled
+        ref={ref}
+        placeholder="Buscar produto no carrinho"
+        placeholderTextColor="#a6aab4"
+        {...props}
+      />
+    </Container>
   );
 };
 
