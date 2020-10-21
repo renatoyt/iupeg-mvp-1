@@ -7,7 +7,6 @@ import React, {
   useState,
 } from 'react';
 import BarCodeInput from '../../components/Popups/BarCodeInput';
-import Scanner from '../../components/Scanner';
 import Search from '../../components/Search';
 import TextRegular from '../../components/Text/TextRegular';
 import GoToPaymentButton from '../../components/Touchable/GoToPaymentButton';
@@ -19,10 +18,10 @@ import {
   ContentHeader,
   Section,
   HeaderTitle,
-  WithoutScanner,
   SectionHeader,
   CameraIcon,
   TotalValueText,
+  ScannerStyled,
   Product,
   ItensList,
   ProductDescription,
@@ -52,7 +51,7 @@ interface HeaderRef {
 const Shopping: React.FC = () => {
   const [formattedList, setFormattedList] = useState<ProductProps[]>([]);
   const [searchValue, setSearchValue] = useState('');
-  const [camera, setCamera] = useState(true);
+  const [camera, setCamera] = useState(false);
   const [searchFocus, setSearchFocus] = useState(false);
 
   const { navigate } = useNavigation();
@@ -115,7 +114,7 @@ const Shopping: React.FC = () => {
           <HeaderTitle>Valor da compra</HeaderTitle>
           <TotalValueText>{totalPrice}</TotalValueText>
         </ContentHeader>
-        {camera ? <Scanner /> : <WithoutScanner />}
+        <ScannerStyled />
         <SectionHeader>
           <BarCodeInput />
           <CameraIcon

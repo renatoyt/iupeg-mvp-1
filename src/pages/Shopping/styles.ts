@@ -6,6 +6,7 @@ import * as Animatable from 'react-native-animatable';
 import TextRegular from '../../components/Text/TextRegular';
 import TextSemiBold from '../../components/Text/TextSemiBold';
 import TouchableIcon from '../../components/Touchable/TouchableIcon';
+import Scanner from '../../components/Scanner';
 import { ProductProps } from './index';
 
 interface PatternProps {
@@ -40,10 +41,13 @@ export const ContentHeader = styled.View`
   justify-content: center;
 `;
 
-export const WithoutScanner = styled.View`
-  margin-top: 20px;
-  height: 50%;
-  width: 70%;
+export const ScannerStyled = styled(Scanner) <PatternProps>`
+  display: flex;
+  ${props =>
+    props.isSelected &&
+    css`
+      display: none;
+    `}
 `;
 
 export const SectionHeader = styled.View`

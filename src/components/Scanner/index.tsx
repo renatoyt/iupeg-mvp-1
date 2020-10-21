@@ -21,7 +21,7 @@ interface BarCodeScannerResult {
   data: string;
 }
 
-const Scanner: React.FC = () => {
+const Scanner: React.FC = ({ ...props }) => {
   const [hasPermission, setHasPermission] = useState<any>(null);
   const [scanned, setScanned] = useState(false);
 
@@ -70,6 +70,7 @@ const Scanner: React.FC = () => {
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
+        {...props}
       />
 
       {scanned && (
