@@ -2,11 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Alert, Button, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
+import { createAnimatableComponent as Animated } from 'react-native-animatable';
 import TextRegular from '../Text/TextRegular';
 import { useCart } from '../../hooks/useCartContext';
 import findProductByID from '../../util/findProductByID';
 
-const Container = styled.View`
+interface ScannerProps {
+  statusCamera: boolean;
+}
+
+interface ComponentProps {
+  statusCamera: boolean;
+}
+
+interface BarCodeScannerResult {
+  type: string;
+  data: string;
+}
+
+const JustStyles = styled.View`
   flex-direction: column;
 
   margin-top: 20px;
@@ -16,12 +30,9 @@ const Container = styled.View`
   border-radius: 10px;
 `;
 
-interface BarCodeScannerResult {
-  type: string;
-  data: string;
-}
+const Container = Animated(JustStyles);
 
-const Scanner: React.FC = ({ ...props }) => {
+const Scanner = ({ statusCamera }: ComponentProps): JSX.Element => {
   const [hasPermission, setHasPermission] = useState<any>(null);
   const [scanned, setScanned] = useState(false);
 
@@ -66,20 +77,23 @@ const Scanner: React.FC = ({ ...props }) => {
   }
 
   return (
-    <Container>
-      <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={StyleSheet.absoluteFillObject}
-        {...props}
-      />
+    <>
+      {!statusCamera && (
+        <Container animation={!statusCamera ? 'fadeInUp' : 'fadeOut'}>
+          <BarCodeScanner
+            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+            style={StyleSheet.absoluteFillObject}
+          />
 
-      {scanned && (
-        <Button
-          title="Toque aqui para escanear novamente"
-          onPress={() => setScanned(false)}
-        />
+          {scanned && (
+            <Button
+              title="Toque aqui para escanear novamente"
+              onPress={() => setScanned(false)}
+            />
+          )}
+        </Container>
       )}
-    </Container>
+    </>
   );
 };
 

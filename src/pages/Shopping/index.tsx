@@ -6,7 +6,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { TouchableWithoutFeedback } from 'react-native';
+import AnimatedContentHeader from '../../components/AnimatedContetHeader';
 import BarCodeInput from '../../components/Popups/BarCodeInput';
+import Scanner from '../../components/Scanner';
 import Search from '../../components/Search';
 import TextRegular from '../../components/Text/TextRegular';
 import GoToPaymentButton from '../../components/Touchable/GoToPaymentButton';
@@ -15,13 +18,9 @@ import formatValue from '../../util/formatValue';
 import {
   Container,
   Header,
-  ContentHeader,
   Section,
   HeaderTitle,
-  SectionHeader,
-  CameraIcon,
   TotalValueText,
-  ScannerStyled,
   Product,
   ItensList,
   ProductDescription,
@@ -51,8 +50,8 @@ interface HeaderRef {
 const Shopping: React.FC = () => {
   const [formattedList, setFormattedList] = useState<ProductProps[]>([]);
   const [searchValue, setSearchValue] = useState('');
-  const [camera, setCamera] = useState(false);
   const [searchFocus, setSearchFocus] = useState(false);
+  const [statusCamera, setStatusCamera] = useState(false);
 
   const { navigate } = useNavigation();
   const { products } = useCart();
@@ -73,6 +72,16 @@ const Shopping: React.FC = () => {
     setFormattedList(searchProducts);
   }, [products, searchValue]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStatusCamera(true);
+    }, 8000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [statusCamera]);
+
   const handleSearch = useCallback(text => {
     setSearchValue(text);
   }, []);
@@ -91,7 +100,7 @@ const Shopping: React.FC = () => {
     [navigate],
   );
 
-  const toggleCamera = useCallback(() => setCamera(!camera), [camera]);
+  const toggleStatusCamera = useCallback(() => setStatusCamera(false), []);
 
   const totalPrice = useMemo(() => {
     const total = products.reduce((acc, product) => {
@@ -104,26 +113,23 @@ const Shopping: React.FC = () => {
 
   return (
     <Container>
-      <Header
-        ref={headerRef}
-        delay={3000}
-        useNativeDriver
-        isSelected={searchFocus}
-      >
-        <ContentHeader>
-          <HeaderTitle>Valor da compra</HeaderTitle>
-          <TotalValueText>{totalPrice}</TotalValueText>
-        </ContentHeader>
-        <ScannerStyled />
-        <SectionHeader>
-          <BarCodeInput />
-          <CameraIcon
-            isSelected={camera}
-            onPress={toggleCamera}
-            iconName="camera-off"
-          />
-        </SectionHeader>
-      </Header>
+      <TouchableWithoutFeedback onPress={toggleStatusCamera}>
+        <Header
+          ref={headerRef}
+          delay={3000}
+          useNativeDriver
+          isSelected={searchFocus}
+        >
+          <AnimatedContentHeader statusCamera={statusCamera}>
+            <HeaderTitle isSelected={statusCamera}>Valor da compra</HeaderTitle>
+            <TotalValueText isSelected={statusCamera}>
+              {totalPrice}
+            </TotalValueText>
+          </AnimatedContentHeader>
+          <Scanner statusCamera={statusCamera} />
+          <BarCodeInput statusCamera={statusCamera} />
+        </Header>
+      </TouchableWithoutFeedback>
       <Section isSelected={searchFocus}>
         <CartTitle>Carrinho de compras</CartTitle>
         <Search

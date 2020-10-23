@@ -2,11 +2,10 @@ import styled, { css } from 'styled-components/native';
 import { FlatList, Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { RectButton } from 'react-native-gesture-handler';
-import * as Animatable from 'react-native-animatable';
+import { createAnimatableComponent as Animated } from 'react-native-animatable';
 import TextRegular from '../../components/Text/TextRegular';
 import TextSemiBold from '../../components/Text/TextSemiBold';
 import TouchableIcon from '../../components/Touchable/TouchableIcon';
-import Scanner from '../../components/Scanner';
 import { ProductProps } from './index';
 
 interface PatternProps {
@@ -19,7 +18,7 @@ export const Container = styled.View`
   padding-top: ${Platform.OS === 'ios' ? Constants.statusBarHeight : 0}px;
 `;
 
-export const Header = Animatable.createAnimatableComponent(
+export const Header = Animated(
   styled.View<PatternProps>`
     flex: 1;
 
@@ -34,55 +33,30 @@ export const Header = Animatable.createAnimatableComponent(
   `,
 );
 
-export const ContentHeader = styled.View`
-  margin-top: 5px;
-
-  align-items: center;
-  justify-content: center;
-`;
-
-export const ScannerStyled = styled(Scanner) <PatternProps>`
-  display: flex;
-  ${props =>
-    props.isSelected &&
-    css`
-      display: none;
-    `}
-`;
-
-export const SectionHeader = styled.View`
-  flex: 1;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-
-  margin: 0 60px;
-`;
-
-export const CameraIcon = styled(TouchableIcon) <PatternProps>`
-  font-size: 30px;
-  margin-right: 4px;
-  color: #54d3ad;
-
-  ${props =>
-    props.isSelected &&
-    css`
-      color: #a6aab0;
-    `}
-`;
-
-export const HeaderTitle = styled(TextRegular)`
+export const HeaderTitle = styled(TextRegular) <PatternProps>`
   font-size: 16px;
   letter-spacing: 0.2px;
 
   color: #a6aab4;
+
+  ${props =>
+    props.isSelected &&
+    css`
+      font-size: 22px;
+    `}
 `;
 
-export const TotalValueText = styled(TextSemiBold)`
+export const TotalValueText = styled(TextSemiBold) <PatternProps>`
   font-size: 32px;
   letter-spacing: 0.5px;
 
   color: #171d33;
+
+  ${props =>
+    props.isSelected &&
+    css`
+      font-size: 38px;
+    `}
 `;
 
 export const Section = styled.View<PatternProps>`

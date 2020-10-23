@@ -1,9 +1,14 @@
+import { createAnimatableComponent } from 'react-native-animatable';
 import styled from 'styled-components/native';
 import Input from '../../Input';
 
-export const Container = styled.View`
+interface PatternProps {
+  statusCamera?: boolean;
+}
+
+export const Container = createAnimatableComponent(styled.View<PatternProps>`
   flex: 1;
-`;
+`);
 
 export const Content = styled.View`
   background-color: white;
@@ -15,7 +20,7 @@ export const Content = styled.View`
 `;
 
 export const InputStyled = styled(Input)`
-  width: 100%;
+  width: 290px;
   height: 42px;
   margin-bottom: 42px;
   font-size: 15.5px;
