@@ -1,5 +1,5 @@
 /* eslint-disable global-require */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { hideAsync, preventAutoHideAsync } from 'expo-splash-screen';
 import { loadAsync } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';

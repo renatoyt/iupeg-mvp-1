@@ -2,14 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Alert, Button, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { createAnimatableComponent as Animated } from 'react-native-animatable';
-import TextRegular from '../Text/TextRegular';
 import { useCart } from '../../hooks/useCartContext';
 import findProductByID from '../../util/findProductByID';
-
-interface ScannerProps {
-  statusCamera: boolean;
-}
+import { useCameraPermission } from '../../hooks/useCameraPermission';
+import AnimatedContainer from '../Animatable/AnimatedContainer';
 
 interface ComponentProps {
   statusCamera: boolean;
@@ -20,7 +16,7 @@ interface BarCodeScannerResult {
   data: string;
 }
 
-const JustStyles = styled.View`
+const Container = styled(AnimatedContainer)`
   flex-direction: column;
 
   margin-top: 20px;
@@ -30,20 +26,34 @@ const JustStyles = styled.View`
   border-radius: 10px;
 `;
 
-const Container = Animated(JustStyles);
-
 const Scanner = ({ statusCamera }: ComponentProps): JSX.Element => {
-  const [hasPermission, setHasPermission] = useState<any>(null);
   const [scanned, setScanned] = useState(false);
 
   const { addItem } = useCart();
+  const {
+    getCurrentStatus,
+    openSettingsIOS,
+    hasPermission,
+  } = useCameraPermission();
 
   useEffect(() => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
+    getCurrentStatus();
+  }, [getCurrentStatus]);
+
+  // if (hasPermission === 'denied') {
+  //   return (
+  //     <>
+  //       {!statusCamera && (
+  //         <Container animation={!statusCamera ? 'fadeInUp' : 'fadeOut'}>
+  //           <Button
+  //             title="Permissão acesso à câmera"
+  //             onPress={openSettingsIOS}
+  //           />
+  //         </Container>
+  //       )}
+  //     </>
+  //   );
+  // }
 
   const handleBarCodeScanned = ({ data }: BarCodeScannerResult): void => {
     const product = findProductByID(data);
@@ -69,31 +79,20 @@ const Scanner = ({ statusCamera }: ComponentProps): JSX.Element => {
     return product ? sucess() : notFound();
   };
 
-  if (hasPermission === null) {
-    return <TextRegular>Permissão para uso da câmera</TextRegular>;
-  }
-  if (hasPermission === false) {
-    return <TextRegular>Sem acesso a câmera</TextRegular>;
-  }
-
   return (
-    <>
-      {!statusCamera && (
-        <Container animation={!statusCamera ? 'fadeInUp' : 'fadeOut'}>
-          <BarCodeScanner
-            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-            style={StyleSheet.absoluteFillObject}
-          />
+    <Container status={statusCamera}>
+      <BarCodeScanner
+        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        style={StyleSheet.absoluteFillObject}
+      />
 
-          {scanned && (
-            <Button
-              title="Toque aqui para escanear novamente"
-              onPress={() => setScanned(false)}
-            />
-          )}
-        </Container>
+      {scanned && (
+        <Button
+          title="Toque aqui para escanear novamente"
+          onPress={() => setScanned(false)}
+        />
       )}
-    </>
+    </Container>
   );
 };
 

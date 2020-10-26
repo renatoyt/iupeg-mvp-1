@@ -41,4 +41,11 @@ export const Products = [
     image_url: '../assets/jack-daniels.png',
     price: 7.99,
   },
+  {
+    id: '682827',
+    name: 'Red Bull',
+    description: 'Whisky Americano JACK DANIELs Garrafa 750 ML',
+    image_url: '../assets/jack-daniels.png',
+    price: 7.99,
+  },
 ];

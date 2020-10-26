@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
-import AnimatedContentHeader from '../../components/AnimatedContetHeader';
+import AnimatedContentHeader from '../../components/Animatable/AnimatedContetHeader';
 import BarCodeInput from '../../components/Popups/BarCodeInput';
 import Scanner from '../../components/Scanner';
 import Search from '../../components/Search';
